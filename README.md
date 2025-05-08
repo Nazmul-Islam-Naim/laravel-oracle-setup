@@ -1,64 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Oracle and Laravel Integration Guide
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This guide covers the complete process of installing Oracle Database, connecting it with Laravel using the yajra/laravel-oci8 package, and setting up a working environment.
 
-## About Laravel
+- oracle db (23ai free) : https://download.oracle.com/otn-pub/otn_software/db-express/WINDOWS.X64_238000_free.zip
+- download dbevear
+- php 8.2
+- laravel 9
+- pecl: php_oci8_19.dll - https://pecl.php.net/package/oci8/3.4.0/windows
+- package yajra/laravel-oci8: "^9"
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 1. Oracle Database Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Oracle Installation
+- Download Oracle Database from the Oracle website
+- During installation, note that "SS" will be used as your service name
+- Make sure to remember the service password you set during installation
+- Complete the installation process following on-screen instructions
 
-## Learning Laravel
+### Verify Oracle Listener
+After installation, verify the Oracle listener is running and note the port:
+```bash
+lsnrctl status
+lsnrctl reload
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 2. DBeaver Installation and Oracle Connection
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Install DBeaver
+- Download and install DBeaver from https://dbeaver.io/download/
+- Launch DBeaver after installation
 
-## Laravel Sponsors
+### Connect to Oracle as System User
+- Click "New Database Connection"
+- Select "Oracle"
+- Enter the following details:
+  - Host: localhost
+  - Port: 1521 (default port, use the one from lsnrctl status if different)
+  - Service name: SS (the service name you defined during installation)
+  - Username: system
+  - Password: (use the password you set during Oracle installation)
+- Test the connection and save it
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Create User for Laravel
+Connect to Oracle as the system user and execute the following SQL commands in a SQL script:
 
-### Premium Partners
+```sql
+CREATE USER laravel_user IDENTIFIED BY laravel_password;
+GRANT CONNECT, RESOURCE TO laravel_user;
+ALTER USER laravel_user QUOTA UNLIMITED ON USERS;
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Create Connection for Laravel User
+- Click "New Database Connection" again
+- Select "Oracle"
+- Enter the following details:
+  - Host: localhost
+  - Port: 1521
+  - Service name: SS
+  - Username: laravel_user
+  - Password: laravel_password
+- Test the connection and save it
 
-## Contributing
+## 3. PHP Oracle Support Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+### Install PHP OCI8 Extension
+Use PECL to install the OCI8 extension:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+pecl download oci8
+pecl install oci8
+```
 
-## Security Vulnerabilities
+When prompted, provide the path to your Oracle Instant Client directory.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 4. Configure PHP.ini
 
-## License
+Edit your php.ini file to enable the OCI8 extension by adding or uncommenting these lines:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```ini
+extension=oci8_19
+```
+
+Restart your web server after making changes to php.ini.
+
+## 5. Install Laravel Project
+
+Create a new Laravel project:
+
+```bash
+composer create-project laravel/laravel:^9.0 laravel-oracle-project
+```
+
+## 6. Install Yajra Oracle Package
+
+Install the yajra/laravel-oci8 package:
+
+```bash
+composer require yajra/laravel-oci8:"^9"
+
+```
+
+## 7. Update Database Configuration
+
+### Add Oracle Driver to config/database.php
+
+Add the Oracle connection details to your `config/database.php` file:
+
+```php
+'connections' => [
+    // ... other connections
+
+    'oracle' => [
+        'driver'         => 'oracle',
+        'tns'            => '',
+        'host'           => env('DB_HOST', 'localhost'),
+        'port'           => env('DB_PORT', '1521'),
+        'database'       => env('DB_DATABASE', 'FREEPDB1'),
+        'service_name'   => env('DB_SERVICE_NAME', 'FREEPDB1'),
+        'username'       => env('DB_USERNAME', 'laravel_user'),
+        'password'       => env('DB_PASSWORD', 'laravel_password'),
+        'charset'        => env('DB_CHARSET', 'AL32UTF8'),
+        'prefix'         => env('DB_PREFIX', ''),
+        'prefix_schema'  => env('DB_SCHEMA_PREFIX', ''),
+        'edition'        => env('DB_EDITION', 'ora$base'),
+        'server_version' => env('DB_SERVER_VERSION', '11g'),
+        'load_balance'   => env('DB_LOAD_BALANCE', 'yes'),
+        'dynamic'        => [],
+    ],
+],
+```
+
+## 8. Update .env File
+
+Update your `.env` file with Oracle connection details:
+
+```
+DB_CONNECTION=oracle
+DB_HOST=localhost
+DB_PORT=1521
+DB_SERVICE_NAME=FREEPDB1
+DB_USERNAME=laravel_user
+DB_PASSWORD=laravel_password
+```
+
+## 9. Run Migrations
+
+Run Laravel migrations to verify the connection:
+
+```bash
+php artisan migrate
+```
+
+If everything is set up correctly, migrations should run successfully.
+
+## Troubleshooting
+
+### Common Issues:
+
+1. **OCI8 extension not found**
+   - Verify that the extension is properly installed with `php -m`
+   - Check your php.ini file to ensure the extension is enabled
+
+2. **Connection issues**
+   - Verify Oracle service is running with `lsnrctl status`
+   - Test the connection using DBeaver or SQL*Plus
+   - Check firewall settings if connecting to a remote database
+
+3. **Migration errors**
+   - Ensure the laravel_user has the necessary permissions
+   - Check for syntax differences between MySQL and Oracle in your migrations
+
