@@ -179,5 +179,7 @@ If everything is set up correctly, migrations should run successfully.
    - Migration is working fine
    - ORM is working fine
    - Make two CRUD operations to verify the connection
+   - DB facades worked
+   - sanctum tested
    
 

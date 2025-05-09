@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\TeamMembers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TeamMembersController extends Controller
 {
@@ -27,7 +28,7 @@ class TeamMembersController extends Controller
      */
     public function create()
     {
-        $teams = Team::all();
+        $teams = DB::table('teams')->get();
         return view('team-members.create', compact('teams'));
     }
 
