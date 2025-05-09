@@ -8,5 +8,9 @@ class Team extends Model
 {
     protected $table = 'teams';
     protected $fillable = ['name'];
+
+    public function teamMembers() {
+        return $this->hasMany(TeamMembers::class);
+    }
     
 }

@@ -3,7 +3,7 @@
 This guide covers the complete process of installing Oracle Database, connecting it with Laravel using the yajra/laravel-oci8 package, and setting up a working environment.
 
 - oracle db (23ai free) : https://download.oracle.com/otn-pub/otn_software/db-express/WINDOWS.X64_238000_free.zip
-- download dbevear
+- download dbevear and make connection to oracle db 
 - php 8.2
 - laravel 9
 - pecl: php_oci8_19.dll - https://pecl.php.net/package/oci8/3.4.0/windows
@@ -36,7 +36,7 @@ lsnrctl reload
 - Select "Oracle"
 - Enter the following details:
   - Host: localhost
-  - Port: 1521 (default port, use the one from lsnrctl status if different)
+  - Port: 1521 or 1522 (default port, use the one from lsnrctl status if different). you will find prot also in 'SS'
   - Service name: SS (the service name you defined during installation)
   - Username: system
   - Password: (use the password you set during Oracle installation)
@@ -56,7 +56,7 @@ ALTER USER laravel_user QUOTA UNLIMITED ON USERS;
 - Select "Oracle"
 - Enter the following details:
   - Host: localhost
-  - Port: 1521
+  - Port: 1521 or 1522 you will find prot also in 'SS'
   - Service name: SS
   - Username: laravel_user
   - Password: laravel_password
@@ -68,10 +68,8 @@ ALTER USER laravel_user QUOTA UNLIMITED ON USERS;
 ### Install PHP OCI8 Extension
 Use PECL to install the OCI8 extension:
 
-```bash
-pecl download oci8
-pecl install oci8
-```
+ - Download form https://pecl.php.net/package/oci8/3.4.0/windows
+ - put into ../php/ext/
 
 When prompted, provide the path to your Oracle Instant Client directory.
 
@@ -81,6 +79,10 @@ Edit your php.ini file to enable the OCI8 extension by adding or uncommenting th
 
 ```ini
 extension=oci8_19
+```
+- run command to confirm the extension is loaded
+```bash 
+php -m
 ```
 
 Restart your web server after making changes to php.ini.
@@ -171,4 +173,11 @@ If everything is set up correctly, migrations should run successfully.
 3. **Migration errors**
    - Ensure the laravel_user has the necessary permissions
    - Check for syntax differences between MySQL and Oracle in your migrations
+
+
+3. **Test Result**
+   - Migration is working fine
+   - ORM is working fine
+   - Make two CRUD operations to verify the connection
+   
 

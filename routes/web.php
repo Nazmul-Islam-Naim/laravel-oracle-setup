@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamMembersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('teams.index');
-});
+    return view('home');
+})->name('home');
 
 Route::resource('teams', TeamController::class);
+Route::resource('team-members', TeamMembersController::class);

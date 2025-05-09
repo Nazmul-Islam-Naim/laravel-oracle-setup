@@ -13,6 +13,7 @@
             <tr>
                 <th>#</th>
                 <th>Team Name</th>
+                <th>Team Members</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $team->name }}</td>
+                    <td>{{ $team->teamMembers->pluck('name')->implode(', ') }}</td>
                     <td>
                         <a href="{{ route('teams.edit', $team->id) }}" class="btn btn-sm btn-warning">Edit</a>
                         <form action="{{ route('teams.destroy', $team->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
