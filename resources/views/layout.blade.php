@@ -20,6 +20,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{{route('home')}}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{route('about')}}">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{route('teams.index')}}">Team</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{route('team-members.index')}}">Team Members</a></li>
                 </ul>

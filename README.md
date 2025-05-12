@@ -181,5 +181,36 @@ If everything is set up correctly, migrations should run successfully.
    - Make two CRUD operations to verify the connection
    - DB facades worked
    - sanctum tested
+
+## Few Screenshot about instructions
+
+1. **Oracle raw query and result**
+   ![Teamwork Illustration](public/images/instructions/oracle-raw-query.png)
+2. **db and eloquent support**
+   ![Teamwork Illustration](public/images/instructions/db-query.png)
+
+
+   ![Teamwork Illustration](public/images/instructions/eloquent.png)
+
+3. **sanctum tested**
+   ![Teamwork Illustration](public/images/instructions/api-imp.png)
+
+
+   ![Teamwork Illustration](public/images/instructions/api-endpoint.png)
+
+
+## Simple project using oracle
+
+1. Home
+   ![Teamwork Illustration](public/images/project/home.png)
+
+1. Team
+   ![Teamwork Illustration](public/images/project/team.png)
+
+1. Team Member
+   ![Teamwork Illustration](public/images/project/team-member.png)
+
+
+
    
 
